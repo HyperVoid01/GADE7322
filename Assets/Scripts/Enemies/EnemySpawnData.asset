@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d11c20ab627da9488a3ea647c6a450b, type: 3}
+  m_Name: EnemySpawnData
+  m_EditorClassIdentifier: 
+  enemies:
+  - prefab: {fileID: 2393869659548410819, guid: efee532a6215460478985643cef09864, type: 3}
+    minWave: 0
+    maxWave: 5
+    startWeight: 1
+    endWeight: 1
+    endWave: 5
+  - prefab: {fileID: 2393869659548410819, guid: 7ac178e3d6f012d4887900fe5c8456a0, type: 3}
+    minWave: 3
+    maxWave: 7
+    startWeight: 0.1
+    endWeight: 1
+    endWave: 5
+  - prefab: {fileID: 2393869659548410819, guid: 8bae6ec616305fa45b8a50a1f9e982cf, type: 3}
+    minWave: 7
+    maxWave: 12
+    startWeight: 0.1
+    endWeight: 1
+    endWave: 10
+  timeBetweenSpawns: 120
+  spawnRate: 1
+  startSpawnAmount: 10
+  spawnMultiplier: 1.5
+  adaptiveDifficulty: 1
+  expectedStartTowers: 1
+  expectedTowersPerWave: 1
+  targetEnemyLifetime: 20
+  towerInfluence: 0.5
+  smoothing: 0.6
+  minSkill: 0.5
+  maxSkill: 2
+  minCountFactor: 0.7
+  maxCountFactor: 1.5
+  maxWaveShift: 4
