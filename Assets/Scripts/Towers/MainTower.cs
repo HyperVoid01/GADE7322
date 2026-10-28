@@ -1,22 +1,17 @@
 using UnityEngine;
 
-// Central tower
+// Central tower. Losing it ends the game, and its health is shown on the HUD.
 public class MainTower : Tower
 {
-    public override bool TakeDamage(int damageAmount)
+    // Health upgrades raise max health, so the slider is refreshed on every change
+    protected override void OnHealthChanged()
     {
-        if (currentHealth == 0)
-            return true;
-        
-        currentHealth = Mathf.Clamp(currentHealth - damageAmount, 0, maxHealth);
-        HUDManager.Instance.UpdateHealthSlider(currentHealth, maxHealth);
+        if (HUDManager.Instance != null)
+            HUDManager.Instance.UpdateHealthSlider(currentHealth, maxHealth);
+    }
 
-        if (currentHealth == 0)
-        {
-            GameManager.Instance.EndGame();
-            return true;
-        }
-        
-        return false;
+    protected override void Die()
+    {
+        GameManager.Instance.EndGame();
     }
 }

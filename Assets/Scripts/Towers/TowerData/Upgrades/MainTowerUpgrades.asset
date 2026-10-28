@@ -1,0 +1,95 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e117d6edf314c30a1881d49613167c7, type: 3}
+  m_Name: MainTowerUpgrades
+  m_EditorClassIdentifier: 
+  towerName: Main Tower
+  tracks:
+  - displayName: Fortify
+    description: Strengthen the podium so the trident can take more hits.
+    stat: 0
+    levels:
+    - value: 150
+      costs:
+      - resourceType: 0
+        amount: 15
+      - resourceType: 3
+        amount: 5
+    - value: 350
+      costs:
+      - resourceType: 0
+        amount: 25
+      - resourceType: 3
+        amount: 10
+    - value: 600
+      costs:
+      - resourceType: 0
+        amount: 40
+      - resourceType: 3
+        amount: 15
+      - resourceType: 4
+        amount: 3
+  - displayName: Trident Power
+    description: Heavier tridents that deal more damage.
+    stat: 1
+    levels:
+    - value: 5
+      costs:
+      - resourceType: 1
+        amount: 10
+      - resourceType: 2
+        amount: 5
+    - value: 12
+      costs:
+      - resourceType: 1
+        amount: 20
+      - resourceType: 2
+        amount: 10
+    - value: 20
+      costs:
+      - resourceType: 1
+        amount: 30
+      - resourceType: 2
+        amount: 15
+      - resourceType: 4
+        amount: 3
+  - displayName: Sonar Reach
+    description: Sonar lets the trident lock onto enemies from further away.
+    stat: 2
+    levels:
+    - value: 10
+      costs:
+      - resourceType: 2
+        amount: 10
+      - resourceType: 1
+        amount: 5
+    - value: 20
+      costs:
+      - resourceType: 2
+        amount: 20
+      - resourceType: 1
+        amount: 10
+    - value: 35
+      costs:
+      - resourceType: 2
+        amount: 30
+      - resourceType: 1
+        amount: 15
+      - resourceType: 4
+        amount: 5
+  levelVisuals:
+  - upgradesRequired: 3
+    modelPrefab: {fileID: 0}
+    projectilePrefab: {fileID: 0}
+  - upgradesRequired: 6
+    modelPrefab: {fileID: 0}
+    projectilePrefab: {fileID: 0}

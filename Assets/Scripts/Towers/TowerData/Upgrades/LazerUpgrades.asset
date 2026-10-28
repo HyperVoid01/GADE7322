@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e117d6edf314c30a1881d49613167c7, type: 3}
+  m_Name: LazerUpgrades
+  m_EditorClassIdentifier: 
+  towerName: Lazer Gun
+  tracks:
+  - displayName: Reinforced Hull
+    description: Thicker plating so the lazer survives longer.
+    stat: 0
+    levels:
+    - value: 50
+      costs:
+      - resourceType: 0
+        amount: 15
+      - resourceType: 4
+        amount: 2
+    - value: 120
+      costs:
+      - resourceType: 0
+        amount: 25
+      - resourceType: 4
+        amount: 4
+    - value: 200
+      costs:
+      - resourceType: 0
+        amount: 40
+      - resourceType: 4
+        amount: 6
+  - displayName: Focusing Lens
+    description: A tighter beam that burns hotter.
+    stat: 1
+    levels:
+    - value: 3
+      costs:
+      - resourceType: 4
+        amount: 3
+      - resourceType: 0
+        amount: 10
+    - value: 7
+      costs:
+      - resourceType: 4
+        amount: 5
+      - resourceType: 0
+        amount: 20
+    - value: 12
+      costs:
+      - resourceType: 4
+        amount: 8
+      - resourceType: 0
+        amount: 30
+  - displayName: Overcharge
+    description: Damage builds up the longer the beam stays on one enemy.
+    stat: 8
+    levels:
+    - value: 50
+      costs:
+      - resourceType: 4
+        amount: 4
+      - resourceType: 0
+        amount: 15
+    - value: 100
+      costs:
+      - resourceType: 4
+        amount: 6
+      - resourceType: 0
+        amount: 25
+    - value: 200
+      costs:
+      - resourceType: 4
+        amount: 10
+      - resourceType: 0
+        amount: 35
+  levelVisuals:
+  - upgradesRequired: 3
+    modelPrefab: {fileID: 0}
+    projectilePrefab: {fileID: 0}
+  - upgradesRequired: 6
+    modelPrefab: {fileID: 0}
+    projectilePrefab: {fileID: 0}

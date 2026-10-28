@@ -39,8 +39,9 @@ public class TowerDevice : MonoBehaviour
     {
         if (!Input.GetKeyDown(deviceKey)) return;
 
-        // Can't open the shop while placing a tower
+        // Can't open the shop while placing a tower or upgrading one
         if (TowerBuilder.Instance.IsBuilding) return;
+        if (TowerUpgradeMenu.Instance != null && TowerUpgradeMenu.Instance.IsOpen) return;
 
         if (IsActive) HideUI();
         else ShowUI();

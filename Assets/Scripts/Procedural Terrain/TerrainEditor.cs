@@ -21,11 +21,12 @@ public class TerrainEditor : MonoBehaviour
     
     public static TerrainEditor Instance;
 
-    // No mining while the tower shop is open or a tower is being placed.
+    // No mining while the tower shop or upgrade menu is open, or a tower is being placed.
     // Checked every frame so it can't get out of sync with the enabled toggles in TowerBuilder.
     private static bool IsBlockedByUI =>
         (TowerDevice.Instance != null && TowerDevice.Instance.IsActive) ||
-        (TowerBuilder.Instance != null && TowerBuilder.Instance.IsBuilding);
+        (TowerBuilder.Instance != null && TowerBuilder.Instance.IsBuilding) ||
+        (TowerUpgradeMenu.Instance != null && TowerUpgradeMenu.Instance.IsOpen);
 
     private void Awake()
     {

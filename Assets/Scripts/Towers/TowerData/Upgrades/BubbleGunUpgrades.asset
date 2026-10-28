@@ -1,0 +1,89 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9e117d6edf314c30a1881d49613167c7, type: 3}
+  m_Name: BubbleGunUpgrades
+  m_EditorClassIdentifier: 
+  towerName: Bubble Gun
+  tracks:
+  - displayName: Reinforced Hull
+    description: Thicker plating so the gun survives longer.
+    stat: 0
+    levels:
+    - value: 50
+      costs:
+      - resourceType: 0
+        amount: 6
+      - resourceType: 1
+        amount: 4
+    - value: 120
+      costs:
+      - resourceType: 0
+        amount: 12
+      - resourceType: 1
+        amount: 8
+    - value: 200
+      costs:
+      - resourceType: 0
+        amount: 20
+      - resourceType: 1
+        amount: 14
+  - displayName: Pressure Boost
+    description: Higher pressure bubbles hit harder.
+    stat: 1
+    levels:
+    - value: 3
+      costs:
+      - resourceType: 1
+        amount: 6
+      - resourceType: 0
+        amount: 4
+    - value: 7
+      costs:
+      - resourceType: 1
+        amount: 12
+      - resourceType: 0
+        amount: 8
+    - value: 12
+      costs:
+      - resourceType: 1
+        amount: 20
+      - resourceType: 0
+        amount: 14
+  - displayName: Bubble Burst
+    description: Bubbles burst on impact, splashing nearby enemies.
+    stat: 7
+    levels:
+    - value: 2
+      costs:
+      - resourceType: 0
+        amount: 8
+      - resourceType: 1
+        amount: 8
+    - value: 3
+      costs:
+      - resourceType: 0
+        amount: 14
+      - resourceType: 1
+        amount: 14
+    - value: 4.5
+      costs:
+      - resourceType: 0
+        amount: 22
+      - resourceType: 1
+        amount: 22
+  levelVisuals:
+  - upgradesRequired: 3
+    modelPrefab: {fileID: 0}
+    projectilePrefab: {fileID: 0}
+  - upgradesRequired: 6
+    modelPrefab: {fileID: 0}
+    projectilePrefab: {fileID: 0}

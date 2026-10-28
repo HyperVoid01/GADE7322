@@ -64,14 +64,15 @@ public class MiningManager : MonoBehaviour
         UpdatePickaxeVisibility();
     }
 
-    // Hidden while the tower shop is open or a tower is being placed, back as soon as both are done
+    // Hidden while the tower shop or upgrade menu is open or a tower is being placed, back as soon as they're done
     private void UpdatePickaxeVisibility()
     {
         if (pickaxeObject == null) return;
 
         bool shopOpen = TowerDevice.Instance != null && TowerDevice.Instance.IsActive;
         bool building = TowerBuilder.Instance != null && TowerBuilder.Instance.IsBuilding;
-        bool shouldShow = !shopOpen && !building;
+        bool upgrading = TowerUpgradeMenu.Instance != null && TowerUpgradeMenu.Instance.IsOpen;
+        bool shouldShow = !shopOpen && !building && !upgrading;
 
         if (pickaxeObject.activeSelf != shouldShow)
             pickaxeObject.SetActive(shouldShow);

@@ -68,6 +68,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5550401441534333788, guid: ccbd97b2d436cbc4c97dd8522e9e7d14, type: 3}
+      propertyPath: m_Size.y
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5550401441534333788, guid: ccbd97b2d436cbc4c97dd8522e9e7d14, type: 3}
+      propertyPath: m_Center.y
+      value: 1.25
+      objectReference: {fileID: 0}
     - target: {fileID: 8982998231230123766, guid: ccbd97b2d436cbc4c97dd8522e9e7d14, type: 3}
       propertyPath: m_Name
       value: Coral Variant 1

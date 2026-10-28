@@ -12,11 +12,85 @@ public class Harpoon : Tower
 
     private Transform _head; // The harpoon itself, resting at projectileSpawnPoint
     private bool _isActive;
+    private bool _headNeedsRebuild; // Projectile changed mid-throw, swap it once it's back
 
-    private void Awake()
+    private int _baseMaxEnemiesHit;
+    private float _baseChainRange;
+
+    protected override void Awake()
     {
+        base.Awake();
+
         // The harpoon exists permanently and rests at the spawn point
+        SpawnHead();
+    }
+
+    // ---------------- Upgrades ----------------
+
+    protected override void CacheUniqueBaseStats()
+    {
+        _baseMaxEnemiesHit = maxEnemiesHit;
+        _baseChainRange = chainRange;
+    }
+
+    protected override void ResetUniqueStats()
+    {
+        maxEnemiesHit = _baseMaxEnemiesHit;
+        chainRange = _baseChainRange;
+    }
+
+    protected override bool ApplyUniqueUpgrade(UpgradeStat stat, float value)
+    {
+        switch (stat)
+        {
+            case UpgradeStat.HarpoonTargets:
+                maxEnemiesHit += Mathf.RoundToInt(value);
+                return true;
+
+            case UpgradeStat.HarpoonChainRange:
+                chainRange += value;
+                return true;
+        }
+
+        return false;
+    }
+
+    // The resting harpoon is a child of the old model's spawn point, so unparent it before that gets destroyed
+    protected override void OnModelSwapping()
+    {
+        if (_head != null && !_isActive)
+            _head.SetParent(null, true);
+    }
+
+    protected override void OnVisualsChanged(bool modelChanged, bool projectileChanged)
+    {
+        if (projectileChanged)
+            _headNeedsRebuild = true;
+
+        // Mid-throw: the return routine already flies back to the (new) spawn point and handles the rest
+        if (_isActive) return;
+
+        if (_headNeedsRebuild)
+            SpawnHead();
+        else
+            DockHead();
+    }
+
+    // ---------------- Harpoon ----------------
+
+    private void SpawnHead()
+    {
+        if (_head != null)
+            Destroy(_head.gameObject);
+
         _head = Instantiate(projectile, projectileSpawnPoint).transform;
+        DockHead();
+        _headNeedsRebuild = false;
+    }
+
+    private void DockHead()
+    {
+        _head.SetParent(projectileSpawnPoint);
         _head.localPosition = Vector3.zero;
         _head.localRotation = Quaternion.identity;
     }
@@ -63,16 +137,18 @@ public class Harpoon : Tower
             target = FindNextTarget(_head.position, hitEnemies);
         }
 
-        // Return to the resting position (which follows the barrel as it rotates)
+        // Return to the resting position (which follows the barrel as it rotates).
+        // projectileSpawnPoint is re-read every frame, so a level up mid-throw sends it to the new model.
         while ((_head.position - projectileSpawnPoint.position).sqrMagnitude > 0.0001f)
         {
             MoveHead(projectileSpawnPoint.position, returnSpeed);
             yield return null;
         }
 
-        _head.SetParent(projectileSpawnPoint);
-        _head.localPosition = Vector3.zero;
-        _head.localRotation = Quaternion.identity;
+        if (_headNeedsRebuild)
+            SpawnHead();
+        else
+            DockHead();
 
         _isActive = false;
     }
