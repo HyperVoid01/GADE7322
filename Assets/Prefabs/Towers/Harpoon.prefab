@@ -144,6 +144,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Level 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6145702226461214624, guid: 712524488cd5ea64caf0b23c9a54f109, type: 3}
+      propertyPath: turretYaw
+      value: 
+      objectReference: {fileID: 8382829134901459343}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

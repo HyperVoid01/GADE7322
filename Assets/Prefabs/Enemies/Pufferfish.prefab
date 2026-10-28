@@ -230,7 +230,7 @@ MonoBehaviour:
   currentHealth: 75
   maxHealth: 75
   damage: 10
-  range: 5
+  range: 10
   fireRate: 1
   towerMask:
     serializedVersion: 2

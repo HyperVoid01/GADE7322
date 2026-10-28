@@ -71,7 +71,7 @@ MonoBehaviour:
   currentHealth: 500
   maxHealth: 500
   damage: 10
-  range: 25
+  range: 50
   fireRate: 0.5
   enemyMask:
     serializedVersion: 2

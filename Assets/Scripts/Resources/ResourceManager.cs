@@ -7,15 +7,32 @@ public class ResourceManager : MonoBehaviour
     public int ironOre = 0;
     public int copperOre = 0;
 
-    [Header("Coral")] 
+    [Header("Coral")]
     public int pearls = 0;
 
-    [Header("Shipwrecks")] 
+    [Header("Shipwrecks")]
     public int wood = 0;
     public int gold = 0;
-    
+
+    [Header("Testing")]
+    [Tooltip("Everything is affordable and nothing is spent. Only works in the Editor and Development Builds")]
+    [SerializeField] private bool unlimitedResources = false;
+
     public static ResourceManager Instance;
-    
+
+    // Switched off in release builds, so a forgotten tick can't ship
+    public bool UnlimitedResources
+    {
+        get
+        {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            return unlimitedResources;
+#else
+            return false;
+#endif
+        }
+    }
+
     [Serializable]
     public struct ResourceCost
     {
@@ -41,48 +58,55 @@ public class ResourceManager : MonoBehaviour
             case ResourceType.IronOre:
                 ironOre += amount;
                 break;
-            
+
             case ResourceType.CopperOre:
                 copperOre += amount;
                 break;
-            
+
             case ResourceType.Pearl:
                 pearls += amount;
                 break;
-            
+
             case ResourceType.Wood:
                 wood += amount;
                 break;
-            
+
             case ResourceType.Gold:
                 gold += amount;
                 break;
         }
     }
 
+    // Still returns the real amounts while testing, so mining can be checked too
     public int GetResourceAmount(ResourceType resourceType)
     {
         switch (resourceType)
         {
             case ResourceType.IronOre:
                 return ironOre;
-            
+
             case ResourceType.CopperOre:
                 return copperOre;
-            
+
             case ResourceType.Pearl:
                 return pearls;
-            
+
             case ResourceType.Wood:
                 return wood;
-            
+
             case ResourceType.Gold:
                 return gold;
         }
-        
+
         return 0;
     }
-    
+
+    // True if the player has at least this much of a resource (always true while testing)
+    public bool HasEnough(ResourceType resourceType, int amount)
+    {
+        return UnlimitedResources || GetResourceAmount(resourceType) >= amount;
+    }
+
     public static string GetResourceName(ResourceType resourceType)
     {
         switch (resourceType)
@@ -95,9 +119,11 @@ public class ResourceManager : MonoBehaviour
             default:                     return resourceType.ToString();
         }
     }
-    
+
     public bool HasEnoughResources(ResourceCost[] costs)
     {
+        if (UnlimitedResources) return true;
+
         foreach (ResourceCost cost in costs)
         {
             if (GetResourceAmount(cost.resourceType) < cost.amount)
@@ -109,6 +135,8 @@ public class ResourceManager : MonoBehaviour
 
     public void SpendResources(ResourceCost[] costs)
     {
+        if (UnlimitedResources) return;
+
         foreach (ResourceCost cost in costs)
         {
             SpendResource(cost.resourceType, cost.amount);

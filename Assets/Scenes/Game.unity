@@ -233,6 +233,7 @@ MonoBehaviour:
   pearls: 0
   wood: 0
   gold: 0
+  unlimitedResources: 1
 --- !u!1 &122198303
 GameObject:
   m_ObjectHideFlags: 0
@@ -2217,8 +2218,8 @@ MonoBehaviour:
   xSize: 16
   ySize: 35
   zSize: 16
-  chunkXSize: 10
-  chunkZSize: 10
+  chunkXSize: 20
+  chunkZSize: 20
   chunkPrefab: {fileID: 6888684138763693774, guid: dd3e56462aa32c74d96ed1ca9351934f, type: 3}
   terrainSettings: {fileID: 11400000, guid: ba0be83f2a94c5c4e8c3b1ec12fe900b, type: 2}
   interpolate: 1
@@ -2228,8 +2229,8 @@ MonoBehaviour:
   seed: 0
   sealEdges: 0
   pathCount: 3
-  minPathSpawnDistance: 60
-  maxPathSpawnDistance: 80
+  minPathSpawnDistance: 100
+  maxPathSpawnDistance: 150
   pathSplineContainerPrefab: {fileID: 5442344712558200586, guid: bccf17b9b4b20ea41b113c78947579da, type: 3}
   controlPointCount: 6
   pathWindiness: 15
@@ -7695,9 +7696,9 @@ MonoBehaviour:
     limitSurfaceHeight: 1
     surfaceMinHeight: 9
     surfaceMaxHeight: 12
-  totalOreCount: 75
-  totalCoralCount: 100
-  totalShipWreckCount: 5
+  totalOreCount: 150
+  totalCoralCount: 200
+  totalShipWreckCount: 8
   resourceParent: {fileID: 1895412863}
   terrainLayer:
     serializedVersion: 2

@@ -73,7 +73,8 @@ public class UpgradeRowUI : MonoBehaviour
         foreach (ResourceManager.ResourceCost cost in costs)
         {
             int owned = ResourceManager.Instance.GetResourceAmount(cost.resourceType);
-            string hex = ColorUtility.ToHtmlStringRGB(owned >= cost.amount ? affordableColor : missingColor);
+            bool enough = ResourceManager.Instance.HasEnough(cost.resourceType, cost.amount);
+            string hex = ColorUtility.ToHtmlStringRGB(enough ? affordableColor : missingColor);
 
             sb.AppendLine($"<color=#{hex}>{cost.amount} {ResourceManager.GetResourceName(cost.resourceType)} ({owned})</color>");
         }

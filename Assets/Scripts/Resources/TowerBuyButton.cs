@@ -43,7 +43,7 @@ public class TowerBuyButton : MonoBehaviour
 
         foreach (ResourceManager.ResourceCost cost in tower.costs)
         {
-            bool enough = ResourceManager.Instance.GetResourceAmount(cost.resourceType) >= cost.amount;
+            bool enough = ResourceManager.Instance.HasEnough(cost.resourceType, cost.amount);
             string hex = ColorUtility.ToHtmlStringRGB(enough ? affordableColor : missingColor);
 
             sb.AppendLine($"<color=#{hex}>{cost.amount} {ResourceManager.GetResourceName(cost.resourceType)}</color>");
