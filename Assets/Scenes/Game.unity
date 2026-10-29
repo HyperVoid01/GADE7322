@@ -119,6 +119,73 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &47390246
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 47390248}
+  - component: {fileID: 47390247}
+  m_Layer: 0
+  m_Name: Boids
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &47390247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47390246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d636e919486c0e14590f2cdd5695317b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  data: {fileID: 11400000, guid: e6aee73b1445d2247a3e013d005f01dc, type: 2}
+  boidPrefab: {fileID: 4526479372384093854, guid: f6fbd222efabdeb4bbb5fbf3b5c9d897, type: 3}
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  spawnRate: 0
+  numBoids: 100
+  xSize: 160
+  ySize: 20
+  zSize: 160
+  verticalMargin: 5
+  verticalBoundaryWeight: 2
+  levelFlightWeight: 0.5
+  maxPitchAngle: 45
+  maxTurnSpeed: 120
+  rotationSmoothing: 8
+  avoidanceSmoothing: 10
+  cycleRate: 0
+  separationRule: 1
+  alignmentRule: 1
+  cohesionRule: 1
+  avoidObstacles: 1
+  obstacleCheckInterval: 3
+--- !u!4 &47390248
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 47390246}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 160, y: 39, z: 160}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &67960576
 GameObject:
   m_ObjectHideFlags: 0
@@ -2255,10 +2322,10 @@ MonoBehaviour:
   pathTextureBlend: 2
   pathTextureHeight: 4
   showMapBounds: 1
-  showChunkGrid: 1
+  showChunkGrid: 0
   showMapCenter: 1
-  showPathSpawnRadii: 1
-  showCenterFlatten: 1
+  showPathSpawnRadii: 0
+  showCenterFlatten: 0
 --- !u!4 &567244359
 Transform:
   m_ObjectHideFlags: 0
@@ -3509,6 +3576,14 @@ MonoBehaviour:
   maxSlope: 35
   sinkDepth: 0.15
   surfaceAlignment: 0.2
+  pathClearance: 3
+  pathSampleSpacing: 0.5
+  centerClearRadius: 10
+  obstacleLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  obstacleClearance: 1
+  drawBlockedGizmos: 1
   heightScaleRange: {x: 0.6, y: 1.8}
   heightBias: 1.3
   tallerAtClusterCenter: 1
@@ -3516,6 +3591,8 @@ MonoBehaviour:
   widthScaleRange: {x: 0.8, y: 1.2}
   maxTilt: 8
   scaleSwayWithHeight: 1
+  groundCheckPadding: 1
+  groundTolerance: 0.3
 --- !u!4 &873702166
 Transform:
   m_ObjectHideFlags: 0
@@ -8796,6 +8873,7 @@ SceneRoots:
   - {fileID: 832575519}
   - {fileID: 1923616132}
   - {fileID: 567244359}
+  - {fileID: 47390248}
   - {fileID: 109379924}
   - {fileID: 1895412863}
   - {fileID: 873702166}
