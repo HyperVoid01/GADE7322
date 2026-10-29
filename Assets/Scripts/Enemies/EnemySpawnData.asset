@@ -31,7 +31,7 @@ MonoBehaviour:
     startWeight: 0.1
     endWeight: 1
     endWave: 10
-  timeBetweenSpawns: 1
+  timeBetweenSpawns: 120
   spawnRate: 1
   startSpawnAmount: 10
   spawnMultiplier: 1.5

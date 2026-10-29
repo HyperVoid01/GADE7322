@@ -93,5 +93,8 @@ public class TerrainEditor : MonoBehaviour
         Vector3 point = dig ? hit.point + nudge : hit.point - nudge;
 
         MarchingCubes.Instance.EditTerrain(point, editRadius, editStrength, dig);
+        
+        if (KelpSpawner.Instance != null)
+            KelpSpawner.Instance.RemoveKelpInRadius(hit.point, editRadius);
     }
 }
