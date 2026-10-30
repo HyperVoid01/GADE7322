@@ -94,6 +94,7 @@ public partial class MarchingCubes : MonoBehaviour
     // Fired once terrain generation has fully finished
     public event Action OnTerrainGenerated;
     
+    
     // A single sampled point along a path, plus how far along the path (0-1) it is - used for end tapering
     private struct PathPoint
     {
