@@ -35,6 +35,10 @@ public class EnemyProjectile : MonoBehaviour
         if ((transform.position - _targetPos).sqrMagnitude <= hitDistance * hitDistance)
         {
             _target.TakeDamage(_damage);
+
+            if (SfxPlayer.Instance != null)
+                SfxPlayer.Instance.PlayJellyImpact(_targetPos);
+
             Destroy(gameObject);
         }
     }

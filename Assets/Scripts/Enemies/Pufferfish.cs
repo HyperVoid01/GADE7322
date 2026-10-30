@@ -32,6 +32,13 @@ public class Pufferfish : EnemyBase
 
         Vector3 inflatedScale = _baseScale * inflatedSize;
 
+        // MoveTowards moves changeSpeed units per second, so this is how long the inflate takes
+        if (SfxPlayer.Instance != null)
+        {
+            float inflateTime = (inflatedScale - transform.localScale).magnitude / Mathf.Max(0.01f, changeSpeed);
+            SfxPlayer.Instance.PlayPufferInflate(transform.position, inflateTime);
+        }
+
         // Inflate
         while (transform.localScale != inflatedScale)
         {
@@ -42,6 +49,9 @@ public class Pufferfish : EnemyBase
 
         // Damage every tower in range
         DamageAllTowersInRange();
+
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlayPufferPop(transform.position);
 
         // Stay inflated for a moment
         yield return new WaitForSeconds(inflatedDuration);

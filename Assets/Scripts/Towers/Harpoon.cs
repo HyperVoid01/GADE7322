@@ -137,6 +137,9 @@ public class Harpoon : Tower
             hitEnemies.Add(target);
             target.TakeDamage(damage);
 
+            if (SfxPlayer.Instance != null)
+                SfxPlayer.Instance.PlayHarpoonHit(_head.position);
+
             target = FindNextTarget(_head.position, hitEnemies);
         }
 
@@ -152,6 +155,9 @@ public class Harpoon : Tower
             SpawnHead();
         else
             DockHead();
+
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlayHarpoonDock(projectileSpawnPoint.position);
 
         _isActive = false;
     }

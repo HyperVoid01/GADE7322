@@ -62,6 +62,7 @@ public class Tower : MonoBehaviour, ITargetable
 
     private int[] _trackLevels;
     private int _level = 1;
+    private float _nextHitSoundTime;
 
     // Fired after any upgrade is bought, so open UI can refresh
     public event Action<Tower> OnUpgraded;
@@ -251,7 +252,10 @@ public class Tower : MonoBehaviour, ITargetable
         }
 
         if (damageAmount > 0)
+        {
             Flash();
+            PlayHitSound();
+        }
 
         return false;
     }
@@ -264,7 +268,25 @@ public class Tower : MonoBehaviour, ITargetable
 
     protected virtual void Die()
     {
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlayTowerDestroyed(transform.position);
+
         Destroy(gameObject);
+    }
+
+    // Hits are throttled so several enemies attacking at once don't stack into noise.
+    // The main tower also sounds an alarm that's heard anywhere on the map.
+    private void PlayHitSound()
+    {
+        if (SfxPlayer.Instance == null) return;
+
+        if (this is MainTower)
+            SfxPlayer.Instance.PlayMainTowerAlarm();
+
+        if (Time.time < _nextHitSoundTime) return;
+        _nextHitSoundTime = Time.time + 0.15f;
+
+        SfxPlayer.Instance.PlayTowerHit(transform.position);
     }
 
     // Main tower uses this to update the HUD
@@ -398,8 +420,18 @@ public class Tower : MonoBehaviour, ITargetable
 
         _trackLevels[trackIndex]++;
 
+        int previousLevel = _level;
         RecalculateStats();
         UpdateLevel();
+
+        // A bigger fanfare when the tower's model levels up
+        if (SfxPlayer.Instance != null)
+        {
+            if (_level > previousLevel)
+                SfxPlayer.Instance.PlayLevelUp();
+            else
+                SfxPlayer.Instance.PlayUpgrade(TotalUpgrades);
+        }
 
         OnUpgraded?.Invoke(this);
         return true;

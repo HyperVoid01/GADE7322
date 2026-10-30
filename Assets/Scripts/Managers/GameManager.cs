@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
         if (MarchingCubes.Instance != null)
         {
             MarchingCubes.Instance.OnTerrainGenerated -= SpawnPlayer;
-            MarchingCubes.Instance.OnTerrainGenerated += InitializeMainTower;
+            MarchingCubes.Instance.OnTerrainGenerated -= InitializeMainTower;
         }
     }
 
@@ -64,6 +64,9 @@ public class GameManager : MonoBehaviour
     public void EndGame()
     {
         Time.timeScale = 0;
+
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlayGameOver();
         
         HUDManager.Instance.ShowGameOverUI();
     }

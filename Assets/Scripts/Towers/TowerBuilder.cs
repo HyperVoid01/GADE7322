@@ -112,8 +112,13 @@ public class TowerBuilder : MonoBehaviour
         bool valid = IsValidPlacement(hit.point);
         SetPlaceholderValid(valid);
 
-        if (valid && Input.GetKeyDown(KeyCode.Mouse0) && Time.frameCount != _buildStartFrame)
-            TryBuild(hit.point);
+        if (Input.GetKeyDown(KeyCode.Mouse0) && Time.frameCount != _buildStartFrame)
+        {
+            if (valid)
+                TryBuild(hit.point);
+            else if (SfxPlayer.Instance != null)
+                SfxPlayer.Instance.PlayDenied();
+        }
     }
 
     private bool IsValidPlacement(Vector3 point)
@@ -140,11 +145,17 @@ public class TowerBuilder : MonoBehaviour
         // Re-check in case resources changed while placing
         if (!ResourceManager.Instance.HasEnoughResources(_selectedTower.costs))
         {
+            if (SfxPlayer.Instance != null)
+                SfxPlayer.Instance.PlayDenied();
+
             CancelBuild();
             return;
         }
 
         ResourceManager.Instance.SpendResources(_selectedTower.costs);
+
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlayPurchase();
 
         GameObject prefab = _selectedTower.prefab;
         EndBuild();
@@ -198,7 +209,8 @@ public class TowerBuilder : MonoBehaviour
         if (CameraShake.Instance != null)
             CameraShake.Instance.ShakeAt(landing, shakeMagnitude, shakeDuration, shakeMaxDistance);
 
-        // Landing particles or a sound would go here
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlayTowerLand(landing);
     }
 
     private void CancelBuild()

@@ -29,6 +29,9 @@ public class TowerProjectile : MonoBehaviour
         _hasHit = true;
         enemy.TakeDamage(damage);
 
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlayProjectileHit(transform.position);
+
         if (splashRadius > 0f)
             Splash(enemy);
 
@@ -42,6 +45,9 @@ public class TowerProjectile : MonoBehaviour
 
         if (splashEffect != null)
             Instantiate(splashEffect, center, Quaternion.identity);
+
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlaySplash(center);
 
         HashSet<EnemyBase> damaged = new HashSet<EnemyBase> { directHit };
 

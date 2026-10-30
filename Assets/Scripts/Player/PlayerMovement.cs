@@ -13,6 +13,17 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float boundaryPadding = 1f;
     [SerializeField] private float fallResetHeight = -20f;
 
+    [Header("Audio")]
+    [Tooltip("Distance walked between footsteps")]
+    [SerializeField] private float stepLength = 2.2f;
+    [Tooltip("Minimum time in the air before landing makes a sound (ignores small bumps on slopes)")]
+    [SerializeField] private float minAirTimeForLand = 0.25f;
+    [Tooltip("Fall speed that gives the loudest landing")]
+    [SerializeField] private float hardLandingSpeed = 15f;
+
+    private float _stepDistance;
+    private float _airTime;
+
     private Vector3 _lastGroundedPosition;
 
     private Vector3 moveDirection = Vector3.zero;
@@ -20,6 +31,9 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController characterController;
 
     public bool canMove = true;
+
+    // True while sprinting and actually moving. Breathing speeds up with it.
+    public bool IsRunning { get; private set; }
     
     public static PlayerMovement Instance;
 
@@ -58,6 +72,9 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetButton("Jump") && canMove && characterController.isGrounded)
         {
             moveDirection.y = jumpPower;
+
+            if (SfxPlayer.Instance != null)
+                SfxPlayer.Instance.PlayJump(transform.position);
         }
         else
         {
@@ -70,8 +87,13 @@ public class PlayerMovement : MonoBehaviour
             moveDirection.y -= gravity * Time.deltaTime;
         }
 
+        bool wasGrounded = characterController.isGrounded;
+        float verticalSpeed = moveDirection.y;
+
         // Move Player
         characterController.Move(moveDirection * Time.deltaTime);
+
+        UpdateMovementAudio(wasGrounded, verticalSpeed, isRunning);
         
         if (characterController.isGrounded)
         {
@@ -91,6 +113,41 @@ public class PlayerMovement : MonoBehaviour
         }
     }
     
+    // Footsteps every stepLength units walked, and a landing thump after a real fall
+    private void UpdateMovementAudio(bool wasGrounded, float verticalSpeed, bool isRunning)
+    {
+        bool grounded = characterController.isGrounded;
+        float horizontalSpeed = new Vector3(moveDirection.x, 0f, moveDirection.z).magnitude;
+
+        IsRunning = isRunning && horizontalSpeed > 0.1f;
+
+        if (!grounded)
+        {
+            _airTime += Time.deltaTime;
+            return;
+        }
+
+        if (!wasGrounded && _airTime >= minAirTimeForLand && SfxPlayer.Instance != null)
+        {
+            float strength = Mathf.InverseLerp(2f, hardLandingSpeed, -verticalSpeed);
+            SfxPlayer.Instance.PlayLand(transform.position, strength);
+            _stepDistance = 0f;
+        }
+
+        _airTime = 0f;
+
+        if (horizontalSpeed < 0.1f) return;
+
+        _stepDistance += horizontalSpeed * Time.deltaTime;
+        if (_stepDistance >= stepLength)
+        {
+            _stepDistance -= stepLength;
+
+            if (SfxPlayer.Instance != null)
+                SfxPlayer.Instance.PlayFootstep(transform.position, IsRunning);
+        }
+    }
+
     private void ClampToMapBounds()
     {
         if (MarchingCubes.Instance == null) return;

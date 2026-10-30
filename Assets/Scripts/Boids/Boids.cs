@@ -44,6 +44,10 @@ public class Boids : MonoBehaviour
     [SerializeField] private bool cohesionRule;
     [SerializeField] private bool avoidObstacles;
 
+    [Header("Audio")]
+    [Tooltip("Random wait (min, max seconds) between bubbles from the school")]
+    [SerializeField] private Vector2 bubbleInterval = new Vector2(2f, 5f);
+
     [Header("Performance")]
     [Tooltip("Each boid does its SphereCast once every N cycles. Higher = cheaper, slightly slower reactions.")]
     [SerializeField, Min(1)] private int obstacleCheckInterval = 3;
@@ -122,6 +126,21 @@ public class Boids : MonoBehaviour
 
         BuildGridLayout();
         StartCoroutine(BoidCycle());
+        StartCoroutine(FishBubbleRoutine());
+    }
+
+    // ---------------- Audio ----------------
+
+    // Every few seconds a random fish lets out a few bubbles. Distant fish fade out naturally (3D sound).
+    private IEnumerator FishBubbleRoutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(Random.Range(bubbleInterval.x, bubbleInterval.y));
+
+            if (_count > 0 && SfxPlayer.Instance != null)
+                SfxPlayer.Instance.PlayFishBubbles(_positions[Random.Range(0, _count)]);
+        }
     }
 
     // ---------------- Main loop ----------------

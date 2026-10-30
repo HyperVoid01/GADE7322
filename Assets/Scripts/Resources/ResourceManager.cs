@@ -53,6 +53,9 @@ public class ResourceManager : MonoBehaviour
 
     public void AddResource(ResourceType resourceType, int amount)
     {
+        if (amount > 0 && SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlayCollect(resourceType);
+
         switch (resourceType)
         {
             case ResourceType.IronOre:

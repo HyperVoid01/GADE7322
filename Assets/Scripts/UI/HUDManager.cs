@@ -14,6 +14,10 @@ public class HUDManager : MonoBehaviour
     [SerializeField] private TMP_Text timerText;
     [SerializeField] private Slider mainTowerHealthSlider;
 
+    [Header("Audio")]
+    [Tooltip("Ticks play for this many final seconds of the countdown")]
+    [SerializeField] private int countdownTickSeconds = 5;
+
     private float _time;
     private Coroutine _timerCoroutine;
     
@@ -38,6 +42,9 @@ public class HUDManager : MonoBehaviour
         
         hudUI.SetActive(false);
         deviceUI.SetActive(true);
+
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlayMenuOpen();
     }
 
     // Hide Tower Shop UI
@@ -48,6 +55,9 @@ public class HUDManager : MonoBehaviour
         
         hudUI.SetActive(true);
         deviceUI.SetActive(false);
+
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlayMenuClose();
     }
 
     // Updates Wave Slider with enemy spawns
@@ -85,10 +95,21 @@ public class HUDManager : MonoBehaviour
     private IEnumerator Timer(float time)
     {
         _time = time;
+        int lastTickSecond = -1;
     
         while (_time > 0)
         {
             timerText.text = "NEXT WAVE\n" + FormatTime(_time);
+
+            // One tick per second for the last few seconds, a sharper one on the final second
+            int secondsLeft = Mathf.CeilToInt(_time);
+            if (secondsLeft <= countdownTickSeconds && secondsLeft != lastTickSecond)
+            {
+                lastTickSecond = secondsLeft;
+                if (SfxPlayer.Instance != null)
+                    SfxPlayer.Instance.PlayCountdownTick(secondsLeft == 1);
+            }
+
             yield return new WaitForEndOfFrame();
             _time -= Time.deltaTime;
         }

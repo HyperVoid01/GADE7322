@@ -85,6 +85,9 @@ public class EnemySpawner : MonoBehaviour
             currentEnemies.Add(newEnemy);
             _spawnTimes[newEnemy] = Time.time;
 
+            if (SfxPlayer.Instance != null)
+                SfxPlayer.Instance.PlayCaveSpawn(spawnPoints[point]);
+
             yield return new WaitForSeconds(delay);
         }
 
@@ -142,23 +145,28 @@ public class EnemySpawner : MonoBehaviour
             yield return new WaitForSeconds(data.timeBetweenSpawns);
 
             HUDManager.Instance.ShowWaveInProgress();
-            SetAmbienceTension(1f);
+            SetTension(1f);
+            if (SfxPlayer.Instance != null) SfxPlayer.Instance.PlayWaveStart();
             StartCoroutine(SpawnEnemies());
 
             // Waits until the wave has finished spawning AND all enemies are dead
             yield return new WaitUntil(() => !_isSpawning && currentEnemies.Count == 0);
             HUDManager.Instance.UpdateWaveMeterSlider(0, 1);
-            SetAmbienceTension(0f);
+            SetTension(0f);
+            if (SfxPlayer.Instance != null) SfxPlayer.Instance.PlayWaveCleared();
 
             spawnAmount = Mathf.CeilToInt(spawnAmount * data.spawnMultiplier);
         }
     }
 
-    // Fades the ambience drone in during a wave and out during the break
-    private static void SetAmbienceTension(float tension)
+    // Ambience drone and music get more intense during a wave and calm down in the break
+    private static void SetTension(float tension)
     {
         if (UnderwaterAmbience.Instance != null)
             UnderwaterAmbience.Instance.tension = tension;
+
+        if (GenerativeMusic.Instance != null)
+            GenerativeMusic.Instance.tension = tension;
     }
 
     // Removes dead enemies from the list and records how long they survived

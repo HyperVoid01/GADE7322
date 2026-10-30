@@ -42,6 +42,9 @@ public class Pickaxe : MonoBehaviour
     {
         if (_isSwinging || !gameObject.activeInHierarchy) return;
 
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlayPickaxeSwing(transform.position);
+
         StartCoroutine(SwingRoutine());
     }
 

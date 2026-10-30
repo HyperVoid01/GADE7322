@@ -41,6 +41,12 @@ public class KelpSpawner : MonoBehaviour
     [Header("Sway Variation")]
     [SerializeField] private bool scaleSwayWithHeight = true; // taller kelp bends further
 
+    [Header("Audio")]
+    [Tooltip("Kelp within this distance of the player can rustle")]
+    [SerializeField] private float rustleRadius = 8f;
+    [Tooltip("Random wait (min, max seconds) between rustles")]
+    [SerializeField] private Vector2 rustleInterval = new Vector2(1.5f, 4f);
+
     [Header("Mining Cleanup")]
     [SerializeField] private float groundCheckPadding = 1f; // extra radius around a dig checked for floating kelp
     [SerializeField] private float groundTolerance = 0.3f; // how far the ground may drop before kelp counts as floating
@@ -74,6 +80,40 @@ public class KelpSpawner : MonoBehaviour
 
         // Subscribed in Awake so we don't miss the event fired from MarchingCubes.Start
         marchingCubes.OnTerrainGenerated += HandleTerrainGenerated;
+    }
+
+    private void Start()
+    {
+        StartCoroutine(RustleRoutine());
+    }
+
+    // Every few seconds one random kelp near the player sways with a soft swish
+    private System.Collections.IEnumerator RustleRoutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(Random.Range(rustleInterval.x, rustleInterval.y));
+
+            if (SfxPlayer.Instance == null || PlayerMovement.Instance == null) continue;
+
+            Vector3 playerPos = PlayerMovement.Instance.transform.position;
+            float sqrRadius = rustleRadius * rustleRadius;
+            Transform chosen = null;
+            int nearbyCount = 0;
+
+            // Picks uniformly among nearby kelp in one pass (reservoir sampling)
+            foreach (Transform kelp in _spawnedKelp)
+            {
+                if (kelp == null || (kelp.position - playerPos).sqrMagnitude > sqrRadius) continue;
+
+                nearbyCount++;
+                if (Random.Range(0, nearbyCount) == 0)
+                    chosen = kelp;
+            }
+
+            if (chosen != null)
+                SfxPlayer.Instance.PlayKelpRustle(chosen.position);
+        }
     }
 
     private void OnDestroy()

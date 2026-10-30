@@ -77,7 +77,11 @@ public class TowerDevice : MonoBehaviour
     public void BuyTower(TowerData tower)
     {
         if (tower == null || !ResourceManager.Instance.HasEnoughResources(tower.costs))
+        {
+            if (SfxPlayer.Instance != null)
+                SfxPlayer.Instance.PlayDenied();
             return;
+        }
 
         HideUI();
         TowerBuilder.Instance.EnterBuildMode(tower);

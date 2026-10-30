@@ -16,5 +16,8 @@ public class JellyFish : EnemyBase
 
         EnemyProjectile projectile = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
         projectile.Initialize(target, damage, projectileSpeed);
+
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlayJellyZap(spawnPos);
     }
 }

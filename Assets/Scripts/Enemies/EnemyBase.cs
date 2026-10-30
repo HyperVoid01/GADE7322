@@ -30,6 +30,7 @@ public class EnemyBase : MonoBehaviour, ITargetable
     protected Tower CurrentTarget => _currentTarget;
     
     private bool _isPaused;
+    private float _nextHitSoundTime;
     
     public float MoveSpeed => moveSpeed;
     public int CurrentHealth => currentHealth;
@@ -83,6 +84,9 @@ public class EnemyBase : MonoBehaviour, ITargetable
 
     public virtual void Attack()
     {
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlayBite(transform.position);
+
         _currentTarget.TakeDamage(damage);
     }
 
@@ -163,6 +167,13 @@ public class EnemyBase : MonoBehaviour, ITargetable
             EnemySpawner.Instance.RemoveEnemy(gameObject);
             Destroy(gameObject);
             return true;
+        }
+
+        // Throttled: the laser damages several times a second
+        if (damageAmount > 0 && SfxPlayer.Instance != null && Time.time >= _nextHitSoundTime)
+        {
+            _nextHitSoundTime = Time.time + 0.2f;
+            SfxPlayer.Instance.PlayEnemyHit(transform.position);
         }
         
         return false;

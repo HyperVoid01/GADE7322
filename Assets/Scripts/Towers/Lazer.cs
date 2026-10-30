@@ -18,6 +18,7 @@ public class Lazer : Tower
     private EnemyBase _chargedEnemy;
     private float _baseStartWidth;
     private float _baseEndWidth;
+    private LaserHum _hum;              // Continuous beam hum, created at runtime
 
     protected override void Awake()
     {
@@ -31,6 +32,8 @@ public class Lazer : Tower
             beam = GetComponent<LineRenderer>();
 
         SetupBeam(beam);
+
+        _hum = LaserHum.Create(transform);
     }
 
     private void SetupBeam(LineRenderer lineRenderer)
@@ -94,11 +97,20 @@ public class Lazer : Tower
         {
             _chargedEnemy = target;
             _chargeTime = 0f;
+
+            // Zap once per new lock-on. The beam damages every fireRate seconds,
+            // so zapping on every tick would turn into a constant buzz.
+            if (target != null && SfxPlayer.Instance != null)
+                SfxPlayer.Instance.PlayLaser(projectileSpawnPoint.position, Level);
         }
         else if (target != null)
         {
             _chargeTime += Time.deltaTime;
         }
+
+        // Hum while firing; it only rises in pitch once the overcharge upgrade is bought
+        if (_hum != null)
+            _hum.SetBeam(target != null, _maxOvercharge > 0f ? ChargePercent : 0f, Level);
 
         if (target == null)
         {
@@ -120,5 +132,6 @@ public class Lazer : Tower
     private void OnDisable()
     {
         if (beam != null) beam.enabled = false;
+        if (_hum != null) _hum.SetBeam(false, 0f, Level);
     }
 }

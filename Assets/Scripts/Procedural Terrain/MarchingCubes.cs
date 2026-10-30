@@ -142,6 +142,9 @@ public partial class MarchingCubes : MonoBehaviour
     
     public static MarchingCubes Instance;
 
+    // The current world seed. GenerativeMusic uses it so each map gets its own tune.
+    public int Seed => seed;
+
     private void Awake()
     {
         if (Instance != null)

@@ -170,6 +170,7 @@ MonoBehaviour:
   alignmentRule: 1
   cohesionRule: 1
   avoidObstacles: 1
+  bubbleInterval: {x: 2, y: 5}
   obstacleCheckInterval: 3
 --- !u!4 &47390248
 Transform:
@@ -2282,12 +2283,53 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 32d8e9daf9be9ec458dffc6a0c0b0647, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  poolSize: 24
+  worldVoices: 32
+  uiVoices: 10
   minDistance: 2
   maxDistance: 60
   variantsPerSound: 6
-  sandDryness: 1
+  sandDryness: 0.5
   masterVolume: 0.8
+  effectsVolume: 0.8
+  terrainDigVolume: 0.6
+  oreHitVolume: 0.7
+  resourceDepletedVolume: 0.5
+  resourceCollectVolume: 0.3
+  pickaxeSwingVolume: 0.35
+  bubbleGunVolume: 0.45
+  projectileHitVolume: 0.4
+  harpoonVolume: 0.7
+  harpoonHitVolume: 0.55
+  laserVolume: 0.45
+  laserHumVolume: 0.25
+  towerHitVolume: 0.5
+  towerDestroyedVolume: 0.8
+  towerLandVolume: 0.8
+  mainTowerAlarmVolume: 0.4
+  enemyHitVolume: 0.35
+  enemyDeathVolume: 0.8
+  enemyAttackVolume: 0.6
+  caveSpawnVolume: 0.5
+  waveStartVolume: 0.6
+  waveClearedVolume: 0.5
+  countdownVolume: 0.4
+  gameOverVolume: 0.8
+  purchaseVolume: 0.5
+  upgradeVolume: 0.5
+  deniedVolume: 0.4
+  footstepVolume: 0.3
+  jumpLandVolume: 0.45
+  breathingVolume: 0.25
+  uiClickVolume: 0.4
+  uiHoverVolume: 0.15
+  menuOpenCloseVolume: 0.4
+  fishBubblesVolume: 0.25
+  kelpVolume: 0.2
+  enableBreathing: 1
+  breathCycle: 5
+  sprintBreathScale: 0.6
+  alarmInterval: 1.5
+  collectInterval: 0.12
 --- !u!4 &532476506
 Transform:
   m_ObjectHideFlags: 0
@@ -3171,6 +3213,37 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1 &797849894
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 797849895}
+  m_Layer: 0
+  m_Name: GenerativeMusic
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &797849895
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 797849894}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &830218341
 GameObject:
   m_ObjectHideFlags: 0
@@ -3657,6 +3730,8 @@ MonoBehaviour:
   widthScaleRange: {x: 0.8, y: 1.2}
   maxTilt: 8
   scaleSwayWithHeight: 1
+  rustleRadius: 8
+  rustleInterval: {x: 1.5, y: 4}
   groundCheckPadding: 1
   groundTolerance: 0.3
 --- !u!4 &873702166
@@ -7858,6 +7933,7 @@ MonoBehaviour:
   waveNumberText: {fileID: 1871325458}
   timerText: {fileID: 608550744}
   mainTowerHealthSlider: {fileID: 830218342}
+  countdownTickSeconds: 5
 --- !u!114 &1884154551
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9090,6 +9166,7 @@ SceneRoots:
   - {fileID: 47390248}
   - {fileID: 532476506}
   - {fileID: 1467899049}
+  - {fileID: 797849895}
   - {fileID: 109379924}
   - {fileID: 1895412863}
   - {fileID: 873702166}

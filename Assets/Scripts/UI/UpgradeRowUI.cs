@@ -28,6 +28,10 @@ public class UpgradeRowUI : MonoBehaviour
     private void Awake()
     {
         buyButton.onClick.AddListener(() => _onBuy?.Invoke());
+
+        // Rows are spawned after SfxPlayer scans the scene, so add the button sounds here
+        if (buyButton.GetComponent<ButtonSound>() == null)
+            buyButton.gameObject.AddComponent<ButtonSound>();
     }
 
     public void Setup(Tower tower, int trackIndex, Action onBuy)

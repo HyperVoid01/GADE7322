@@ -59,6 +59,9 @@ public class TowerUpgradeMenu : MonoBehaviour
         IsOpen = true;
         menuPanel.SetActive(true);
 
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlayMenuOpen();
+
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
         if (PlayerMovement.Instance != null) PlayerMovement.Instance.canMove = false;
@@ -77,6 +80,9 @@ public class TowerUpgradeMenu : MonoBehaviour
         _tower = null;
         IsOpen = false;
         menuPanel.SetActive(false);
+
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlayMenuClose();
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
