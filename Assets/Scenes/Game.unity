@@ -2283,7 +2283,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   xSize: 16
-  ySize: 35
+  ySize: 50
   zSize: 16
   chunkXSize: 20
   chunkZSize: 20
@@ -2311,6 +2311,22 @@ MonoBehaviour:
   centerCutOffRadius: 20
   centerFlattenHeight: -5
   centerProtectionRadius: 10
+  caveSettings:
+    enabled: 1
+    horizontalCellSize: 2
+    verticalCellSize: 1
+    initialRockChance: 0.51
+    rockThreshold: 13
+    iterations: 5
+    removeSmallPockets: 1
+    minPocketCells: 60
+    smoothingPasses: 1
+    minCaveY: 4
+    surfaceMargin: 2
+    pathClearance: 7
+    pathClearanceDepth: 6
+    centerClearance: 14
+    strength: 1
   minDigLayer: 3
   terrainMaterial: {fileID: 2100000, guid: 2211593dce369374eb951a191bda9ade, type: 2}
   patchNoiseScale: 0.06
@@ -7764,7 +7780,7 @@ MonoBehaviour:
     rarity: 0.8
     minSpacing: 0
     minHeight: 2
-    maxHeight: 10
+    maxHeight: 25
     spawnOnSurface: 0
     alignToSurface: 0
     surfaceOffset: 0
@@ -7777,7 +7793,7 @@ MonoBehaviour:
     rarity: 0.5
     minSpacing: 0
     minHeight: 2
-    maxHeight: 10
+    maxHeight: 25
     spawnOnSurface: 0
     alignToSurface: 0
     surfaceOffset: 0
@@ -7836,7 +7852,7 @@ MonoBehaviour:
     limitSurfaceHeight: 1
     surfaceMinHeight: 9
     surfaceMaxHeight: 12
-  totalOreCount: 150
+  totalOreCount: 250
   totalCoralCount: 200
   totalShipWreckCount: 8
   resourceParent: {fileID: 1895412863}

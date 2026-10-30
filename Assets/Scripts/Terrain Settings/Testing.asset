@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56eb639d77f737241a9efdabd8376698, type: 3}
   m_Name: Testing
   m_EditorClassIdentifier: 
-  isoLevel: 0.5
+  isoLevel: 0.4
   noiseScale: 0.04
   octaves: 2
   persistence: 0.5
   lacunarity: 2
   noiseContrast: 1.5
-  groundBlend: 0.43
+  groundBlend: 0.5

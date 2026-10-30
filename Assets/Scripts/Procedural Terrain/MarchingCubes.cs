@@ -54,6 +54,9 @@ public partial class MarchingCubes : MonoBehaviour
     [SerializeField] private float centerProtectionRadius = 10f; // horizontal distance within which player edits are blocked, regardless of terrain height
     public float CenterProtectionRadius => centerProtectionRadius;
     
+    [Header("Caves")]
+    [SerializeField] private CaveSettings caveSettings = new CaveSettings(); // cellular automata caves, see CaveGenerator.cs
+
     [Header("Terrain Editing")]
     [SerializeField] private int minDigLayer = 3; // voxel layers above y=0 that are protected from digging, keeps the sealed floor intact
     
@@ -132,6 +135,7 @@ public partial class MarchingCubes : MonoBehaviour
     private Vector3 _seedOffset;
     private Vector3 _mapCenter; // Center of generated terrain
     private float _averageHeight; // Average surface height of the terrain, estimated before chunks are built
+    private CaveGenerator _caveGenerator; // World-wide cave field, built after paths and before chunks
 
     // Maps each of the 12 edges to the two corner indices it connects
     private static int[,] _edgeCorners;
@@ -171,6 +175,9 @@ public partial class MarchingCubes : MonoBehaviour
         _globalPathSamples.Clear();
         GeneratePaths();
 
+        // Caves need the paths to exist so they can stay clear of them
+        GenerateCaves();
+
         BuildChunks();
         
         OnTerrainGenerated?.Invoke();
@@ -193,8 +200,37 @@ public partial class MarchingCubes : MonoBehaviour
         _triangles.Clear();
         
         seed = Random.Range(int.MinValue, int.MaxValue);
+
+        // Cave surface sampling needs the new seed's noise offset before chunks are built
+        _seedOffset = ComputeSeedOffset(seed);
+        GenerateCaves();
         
         BuildChunks();
+    }
+
+    // Caves
+    // Runs the cellular automata over the whole map once, so caves line up across chunk borders
+    private void GenerateCaves()
+    {
+        if (caveSettings == null || !caveSettings.enabled)
+        {
+            _caveGenerator = null;
+            return;
+        }
+
+        // Every path sample point is protected, which also covers the enemy cave entrances at the path ends
+        List<Vector3> protectedPoints = new List<Vector3>();
+        foreach (List<PathPoint> path in _globalPathSamples)
+        {
+            if (path == null) continue;
+            foreach (PathPoint point in path)
+                protectedPoints.Add(point.position);
+        }
+
+        Vector3Int worldSize = new Vector3Int(xSize * chunkXSize, ySize, zSize * chunkZSize);
+
+        _caveGenerator = new CaveGenerator(caveSettings);
+        _caveGenerator.Generate(seed, worldSize, EstimateSurfaceHeight, protectedPoints, _mapCenter);
     }
 
     private void Generate(GameObject chunkObj, Vector3Int chunkCoord)
@@ -641,6 +677,10 @@ public partial class MarchingCubes : MonoBehaviour
 
                     Vector3 worldPos = chunkOrigin + new Vector3(x, y, z);
 
+                    // Carves cellular automata caves - applied before paths and the plaza so those always win
+                    if (_caveGenerator != null && _caveGenerator.HasCaves)
+                        density = Mathf.Min(density, _caveGenerator.SampleDensity(worldPos));
+
                     // Carves out paths
                     if (hasPaths)
                     {
@@ -653,8 +693,8 @@ public partial class MarchingCubes : MonoBehaviour
                     if (centerCutOffRadius > 0f)
                         density = GetCenterFlattenDensity(worldPos, density);
 
-                    // Seals walls of mesh
-                    if (sealEdges && (x == 0 || y == 0 || z == 0 || x == xSize || y == ySize || z == zSize))
+                    // Seals the outer walls of the whole map only - uses world position so inner chunk borders stay open
+                    if (sealEdges && IsOnMapBoundary(worldPos))
                         density = 0f;
 
                     _densities[x, y, z] = density;
@@ -663,6 +703,19 @@ public partial class MarchingCubes : MonoBehaviour
         }
     }
     
+    // True for voxels on the outside faces of the full map (not the borders between chunks)
+    private bool IsOnMapBoundary(Vector3 worldPos)
+    {
+        int wx = Mathf.RoundToInt(worldPos.x);
+        int wy = Mathf.RoundToInt(worldPos.y);
+        int wz = Mathf.RoundToInt(worldPos.z);
+
+        return wx <= 0 || wy <= 0 || wz <= 0
+               || wx >= xSize * chunkXSize
+               || wy >= ySize
+               || wz >= zSize * chunkZSize;
+    }
+
     // Keeps only the segments whose (grown) bounding box touches this chunk
     private void CollectChunkSegments(Vector3 chunkOrigin)
     {
