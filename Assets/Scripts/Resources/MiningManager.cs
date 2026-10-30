@@ -18,6 +18,10 @@ public class MiningManager : MonoBehaviour
     [Tooltip("Minimum time between spark bursts")]
     [SerializeField] private float impactInterval = 0.1f;
 
+    [Header("Impact Sound")]
+    [Tooltip("Minimum time between hit sounds while mining is held down")]
+    [SerializeField] private float impactSoundInterval = 0.25f;
+
     [Header("Debris")]
     [Tooltip("Debris never collides with anything under this object. Leave empty to use the object TowerBuilder is on (the player).")]
     [SerializeField] private Transform playerRoot;
@@ -43,6 +47,7 @@ public class MiningManager : MonoBehaviour
     private Pickaxe _pickaxe;
     private Collider[] _playerColliders;
     private float _nextImpactTime;
+    private float _nextImpactSoundTime;
     private bool _warnedNoCollider;
 
     private void Awake()
@@ -93,13 +98,21 @@ public class MiningManager : MonoBehaviour
         Resource resource = hit.collider.GetComponentInParent<Resource>();
         if (resource == null) return;
 
-        PlayImpact(hit.point, hit.normal);
+        PlayImpact(hit.point, hit.normal, true);
         resource.TakeDamage(damage, hit.point, hit.normal);
     }
 
-    // Sparks flying out of the surface that was hit. Also called by TerrainEditor when digging terrain.
-    public void PlayImpact(Vector3 point, Vector3 normal)
+    // Sparks and a hit sound where the pickaxe lands. Also called by TerrainEditor when digging terrain.
+    // isOre = true gives the higher, ringing "clink" instead of the dull rock hit.
+    // Mining is held down every frame, so the sound and the sparks each have their own throttle.
+    public void PlayImpact(Vector3 point, Vector3 normal, bool isOre = false)
     {
+        if (SfxPlayer.Instance != null && Time.time >= _nextImpactSoundTime)
+        {
+            _nextImpactSoundTime = Time.time + impactSoundInterval;
+            SfxPlayer.Instance.PlayMineHit(point, isOre);
+        }
+
         if (sparkPrefab == null || Time.time < _nextImpactTime) return;
 
         _nextImpactTime = Time.time + impactInterval;

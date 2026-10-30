@@ -23,6 +23,14 @@ public class BubbleGun : Tower
         return true;
     }
 
+    // A small cluster of bubbles; higher levels fire a bigger cluster
+    protected override void PlayFireSound()
+    {
+        if (SfxPlayer.Instance == null) return;
+
+        SfxPlayer.Instance.PlayBubbleBurst(projectileSpawnPoint.position, 2 + Level);
+    }
+
     protected override void ConfigureProjectile(TowerProjectile towerProjectile)
     {
         if (_splashRadius <= 0f) return;

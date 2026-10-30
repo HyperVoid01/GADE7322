@@ -205,7 +205,12 @@ public class Tower : MonoBehaviour, ITargetable
         Rigidbody projectileRb = newProjectile.GetComponent<Rigidbody>();
         Vector3 fireDirection = (impactPos - projectileSpawnPoint.position).normalized;
         projectileRb.linearVelocity = fireDirection * projectileSpeed;
+
+        PlayFireSound();
     }
+
+    // Child towers override this to play their own procedural shot sound. Silent by default.
+    protected virtual void PlayFireSound() { }
 
     // Lets child towers add extra behaviour to a projectile (e.g. Bubble Gun splash)
     protected virtual void ConfigureProjectile(TowerProjectile towerProjectile) { }

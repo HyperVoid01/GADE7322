@@ -18,6 +18,10 @@ public class EnemyBase : MonoBehaviour, ITargetable
     
     [Header("Movement")]
     [SerializeField] protected float moveSpeed;
+
+    [Header("Audio")]
+    [Tooltip("1 = normal. Bigger enemies use a higher value for a deeper death sound")]
+    [SerializeField] protected float deathSoundSize = 1f;
     
     private Vector3 _pathOffset; // Offset from spline
     private SplineAnimate _animate;
@@ -152,6 +156,10 @@ public class EnemyBase : MonoBehaviour, ITargetable
 
         if (currentHealth == 0)
         {
+            // Played from SfxPlayer's pooled voices, so it isn't cut off by Destroy below
+            if (SfxPlayer.Instance != null)
+                SfxPlayer.Instance.PlayEnemyDeath(transform.position, deathSoundSize);
+
             EnemySpawner.Instance.RemoveEnemy(gameObject);
             Destroy(gameObject);
             return true;

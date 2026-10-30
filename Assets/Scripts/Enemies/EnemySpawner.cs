@@ -142,14 +142,23 @@ public class EnemySpawner : MonoBehaviour
             yield return new WaitForSeconds(data.timeBetweenSpawns);
 
             HUDManager.Instance.ShowWaveInProgress();
+            SetAmbienceTension(1f);
             StartCoroutine(SpawnEnemies());
 
             // Waits until the wave has finished spawning AND all enemies are dead
             yield return new WaitUntil(() => !_isSpawning && currentEnemies.Count == 0);
             HUDManager.Instance.UpdateWaveMeterSlider(0, 1);
+            SetAmbienceTension(0f);
 
             spawnAmount = Mathf.CeilToInt(spawnAmount * data.spawnMultiplier);
         }
+    }
+
+    // Fades the ambience drone in during a wave and out during the break
+    private static void SetAmbienceTension(float tension)
+    {
+        if (UnderwaterAmbience.Instance != null)
+            UnderwaterAmbience.Instance.tension = tension;
     }
 
     // Removes dead enemies from the list and records how long they survived

@@ -100,6 +100,9 @@ public class Harpoon : Tower
         // Can't throw again until the harpoon is back
         if (_isActive || CurrentEnemy == null) return;
 
+        if (SfxPlayer.Instance != null)
+            SfxPlayer.Instance.PlayHarpoon(projectileSpawnPoint.position, Level);
+
         StartCoroutine(HarpoonRoutine(CurrentEnemy));
     }
 

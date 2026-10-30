@@ -105,6 +105,7 @@ public class Resource : MonoBehaviour, ITargetable
         if (_currentAmount <= 0)
         {
             _depleted = true;
+            PlayDepletedSound();
             SpawnDepletedBurst();
             Destroy(gameObject);
             return true;
@@ -130,6 +131,16 @@ public class Resource : MonoBehaviour, ITargetable
         int count = Random.Range(hitDebrisCount.x, hitDebrisCount.y + 1);
         for (int i = 0; i < count; i++)
             MiningManager.Instance.SpawnDebris(debrisPrefab, point + normal * 0.05f, normal);
+    }
+
+    // A deep crumble plus a cloud of bubbles as the resource breaks apart.
+    // SfxPlayer plays from its own pooled voices, so the sound survives this object being destroyed.
+    private void PlayDepletedSound()
+    {
+        if (SfxPlayer.Instance == null) return;
+
+        Vector3 center = GetBounds().center;
+        SfxPlayer.Instance.PlayResourceDepleted(center);
     }
 
     // The model is about to vanish: throw a pile of chunks outward from inside it

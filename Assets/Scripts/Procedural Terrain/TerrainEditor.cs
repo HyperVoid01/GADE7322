@@ -86,7 +86,9 @@ public class TerrainEditor : MonoBehaviour
 
         // Sparks where the pickaxe meets the terrain
         if (dig && MiningManager.Instance != null)
+        {
             MiningManager.Instance.PlayImpact(hit.point, hit.normal);
+        }
         
         // Adds more resolution to digging/mining
         Vector3 nudge = ray.direction.normalized * 0.1f;
