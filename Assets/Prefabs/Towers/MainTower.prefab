@@ -86,7 +86,7 @@ MonoBehaviour:
   predictionIterations: 3
   upgradeData: {fileID: 11400000, guid: f1edcfc3359d4f5989399d8b164fa266, type: 2}
   currentModel: {fileID: 8490257693578038213}
-  modelRoot: {fileID: 4663582193748563397}
+  modelRoot: {fileID: 8382829134901459343}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
   flashDuration: 0.25
 --- !u!1 &907637200552450219

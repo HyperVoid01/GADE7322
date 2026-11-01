@@ -212,6 +212,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Level 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1458095103868526353, guid: fe621f99ffba4dd4898da1ed36a4ad9b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3267932971531865367, guid: fe621f99ffba4dd4898da1ed36a4ad9b, type: 3}
       propertyPath: beam
       value: 

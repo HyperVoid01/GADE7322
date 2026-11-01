@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8854056226485551273}
   - component: {fileID: 6790029228619118237}
   m_Layer: 0
-  m_Name: SM_DS_Garpun_Arrow
+  m_Name: Level 1 Arrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -88,8 +88,8 @@ MonoBehaviour:
         amount: 5
   levelVisuals:
   - upgradesRequired: 3
-    modelPrefab: {fileID: 0}
+    modelPrefab: {fileID: 6448245327619578032, guid: be42a9894d582b840ac950b5bed4415a, type: 3}
     projectilePrefab: {fileID: 0}
   - upgradesRequired: 6
-    modelPrefab: {fileID: 0}
+    modelPrefab: {fileID: 417686797724965602, guid: edfe73a2702dcc14097814634bf42489, type: 3}
     projectilePrefab: {fileID: 0}

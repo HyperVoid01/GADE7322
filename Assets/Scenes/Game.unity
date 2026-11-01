@@ -2430,10 +2430,10 @@ MonoBehaviour:
   pathTextureBlend: 2
   pathTextureHeight: 4
   showMapBounds: 1
-  showChunkGrid: 0
+  showChunkGrid: 1
   showMapCenter: 1
-  showPathSpawnRadii: 0
-  showCenterFlatten: 0
+  showPathSpawnRadii: 1
+  showCenterFlatten: 1
 --- !u!4 &567244359
 Transform:
   m_ObjectHideFlags: 0
