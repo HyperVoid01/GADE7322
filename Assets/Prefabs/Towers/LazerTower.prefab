@@ -194,6 +194,13 @@ MonoBehaviour:
   upgradeData: {fileID: 11400000, guid: bab7f76f866a4f63837dbf01fdd0b041, type: 2}
   currentModel: {fileID: 5514121283672389323}
   modelRoot: {fileID: 8382829134901459343}
+  glowUpTime: 0.6
+  glowDownTime: 0.8
+  glowColor: {r: 0.4, g: 1.5, b: 1.7, a: 1}
+  glowIntensity: 3
+  swellScale: 1.12
+  popInScale: 0.6
+  upgradeBurstPrefab: {fileID: 3268870316234026657, guid: 41a668c3ec0e09947a26045f72a5c307, type: 3}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
   flashDuration: 0.25
   beam: {fileID: 5923150129180591296}

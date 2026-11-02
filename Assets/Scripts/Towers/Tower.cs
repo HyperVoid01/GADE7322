@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 // Parent class for all towers
@@ -36,6 +37,21 @@ public class Tower : MonoBehaviour, ITargetable
     [Tooltip("Parent for spawned level models. Defaults to the current model's parent, or this transform")]
     [SerializeField] protected Transform modelRoot;
 
+    [Header("Level Up Transition")]
+    [Tooltip("Seconds the old model spends charging up (glowing and swelling) before it is swapped")]
+    [SerializeField] private float glowUpTime = 0.6f;
+    [Tooltip("Seconds the new model takes to pop in and cool down from full glow")]
+    [SerializeField] private float glowDownTime = 0.8f;
+    [SerializeField, ColorUsage(false, true)] private Color glowColor = new Color(0.4f, 1.5f, 1.7f, 1f);
+    [Tooltip("Emission strength at full glow. Above 1 catches bloom if the URP Volume has it")]
+    [SerializeField] private float glowIntensity = 3f;
+    [Tooltip("How much the old model swells while charging up (1 = no swell)")]
+    [SerializeField] private float swellScale = 1.12f;
+    [Tooltip("Scale the new model starts at before springing up to full size")]
+    [SerializeField, Range(0.1f, 1f)] private float popInScale = 0.6f;
+    [Tooltip("Played the moment the models swap. Leave empty for no particles")]
+    [SerializeField] private TowerUpgradeBurst upgradeBurstPrefab;
+
     [Header("Hit Feedback")]
     [SerializeField] private Color hitColor = Color.red;
     [SerializeField] private float flashDuration = 0.25f;
@@ -63,6 +79,15 @@ public class Tower : MonoBehaviour, ITargetable
     private int[] _trackLevels;
     private int _level = 1;
     private float _nextHitSoundTime;
+
+    // Level visuals waiting to be shown. Buying several levels at once plays each transition in turn.
+    private readonly Queue<TowerLevelVisual> _pendingVisuals = new Queue<TowerLevelVisual>();
+    private Coroutine _transitionRoutine;
+    private TowerGlow _activeGlow;
+    private Transform _animatedModel;
+    private Vector3 _animatedModelScale;
+
+    public bool IsTransitioning => _transitionRoutine != null;
 
     // Fired after any upgrade is bought, so open UI can refresh
     public event Action<Tower> OnUpgraded;
@@ -341,6 +366,9 @@ public class Tower : MonoBehaviour, ITargetable
     {
         if (_flashRenderers == null || _flashRenderers.Length == 0 || !isActiveAndEnabled) return;
 
+        // The level-up glow owns the model's colour while it plays
+        if (IsTransitioning) return;
+
         if (_flashRoutine != null)
             StopCoroutine(_flashRoutine);
 
@@ -527,9 +555,158 @@ public class Tower : MonoBehaviour, ITargetable
         while (_level - 1 < upgradeData.levelVisuals.Length &&
                total >= upgradeData.levelVisuals[_level - 1].upgradesRequired)
         {
-            ApplyLevelVisual(upgradeData.levelVisuals[_level - 1]);
+            QueueLevelVisual(upgradeData.levelVisuals[_level - 1]);
             _level++;
         }
+    }
+
+    // ---------------- Level up transition ----------------
+
+    // Model swaps play the glow transition. Anything that can't animate (no new model, or the tower is
+    // inactive) is applied straight away, unless a transition is already running, so the order stays correct.
+    private void QueueLevelVisual(TowerLevelVisual visual)
+    {
+        bool canAnimate = visual.modelPrefab != null && currentModel != null && isActiveAndEnabled;
+
+        if (!canAnimate && !IsTransitioning)
+        {
+            ApplyLevelVisual(visual);
+            return;
+        }
+
+        _pendingVisuals.Enqueue(visual);
+
+        if (!IsTransitioning)
+            _transitionRoutine = StartCoroutine(TransitionRoutine());
+    }
+
+    private IEnumerator TransitionRoutine()
+    {
+        // Clear any red hit flash so it doesn't fight the glow
+        StopFlash();
+
+        while (_pendingVisuals.Count > 0)
+        {
+            TowerLevelVisual visual = _pendingVisuals.Peek();
+
+            // Projectile-only levels have nothing to animate
+            if (visual.modelPrefab == null || currentModel == null)
+            {
+                ApplyLevelVisual(_pendingVisuals.Dequeue());
+                continue;
+            }
+
+            // 1. Charge up: the old model glows brighter and swells, trembling harder near the end
+            BeginGlow(currentModel);
+
+            for (float t = 0f; t < glowUpTime; t += Time.deltaTime)
+            {
+                float k = t / glowUpTime;
+                float eased = k * k; // Slow start, fast finish
+
+                _activeGlow.SetAmount(eased);
+
+                float tremble = Mathf.Sin(t * 45f) * 0.015f * eased;
+                _animatedModel.localScale = _animatedModelScale * (Mathf.Lerp(1f, swellScale, eased) + tremble);
+
+                yield return null;
+            }
+
+            // 2. Peak: particles go off and the models swap while hidden by the flash
+            if (upgradeBurstPrefab != null)
+                TowerUpgradeBurst.Spawn(upgradeBurstPrefab, GetModelBounds(currentModel), glowColor);
+
+            EndGlow();
+            ApplyLevelVisual(_pendingVisuals.Dequeue());
+
+            // 3. Pop in: the new model starts small and fully lit, springs past full size, then cools down
+            BeginGlow(currentModel);
+            _activeGlow.SetAmount(1f);
+            _animatedModel.localScale = _animatedModelScale * popInScale;
+
+            for (float t = 0f; t < glowDownTime; t += Time.deltaTime)
+            {
+                float k = t / glowDownTime;
+
+                float fade = 1f - k;
+                _activeGlow.SetAmount(fade * fade); // Fast cool-down, long soft tail
+
+                _animatedModel.localScale = _animatedModelScale * Mathf.LerpUnclamped(popInScale, 1f, EaseOutBack(k));
+
+                yield return null;
+            }
+
+            EndGlow();
+        }
+
+        _transitionRoutine = null;
+    }
+
+    private void BeginGlow(TowerModel model)
+    {
+        _animatedModel = model.transform;
+        _animatedModelScale = _animatedModel.localScale;
+        _activeGlow = TowerGlow.Apply(model.gameObject, glowColor, glowIntensity);
+    }
+
+    // Original materials and scale go back exactly as they were
+    private void EndGlow()
+    {
+        if (_activeGlow != null)
+        {
+            _activeGlow.Remove();
+            _activeGlow = null;
+        }
+
+        if (_animatedModel != null)
+            _animatedModel.localScale = _animatedModelScale;
+
+        _animatedModel = null;
+    }
+
+    // Overshoots past 1 and settles back, like a spring
+    private static float EaseOutBack(float t)
+    {
+        const float c1 = 1.70158f;
+        const float c3 = c1 + 1f;
+        float p = t - 1f;
+        return 1f + c3 * p * p * p + c1 * p * p;
+    }
+
+    // World-space box around the model's meshes, used to size the upgrade burst
+    private Bounds GetModelBounds(TowerModel model)
+    {
+        Bounds bounds = new Bounds(model.transform.position, Vector3.zero);
+        bool found = false;
+
+        foreach (Renderer r in model.GetComponentsInChildren<Renderer>())
+        {
+            if (!(r is MeshRenderer) && !(r is SkinnedMeshRenderer)) continue;
+
+            if (!found)
+            {
+                bounds = r.bounds;
+                found = true;
+            }
+            else
+            {
+                bounds.Encapsulate(r.bounds);
+            }
+        }
+
+        return bounds;
+    }
+
+    private void StopFlash()
+    {
+        if (_flashRoutine != null)
+        {
+            StopCoroutine(_flashRoutine);
+            _flashRoutine = null;
+        }
+
+        if (_flashRenderers != null)
+            ClearTint();
     }
 
     private void ApplyLevelVisual(TowerLevelVisual visual)

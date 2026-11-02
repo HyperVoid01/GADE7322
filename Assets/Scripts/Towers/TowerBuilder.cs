@@ -41,6 +41,10 @@ public class TowerBuilder : MonoBehaviour
     [Tooltip("Players further than this from the landing feel no shake")]
     [SerializeField] private float shakeMaxDistance = 40f;
 
+    [Header("Landing Dust")]
+    [Tooltip("Sediment cloud played where the tower lands. Leave empty for none")]
+    [SerializeField] private TowerLandingDust landingDustPrefab;
+
     public static TowerBuilder Instance;
     public bool IsBuilding { get; private set; }
 
@@ -211,6 +215,34 @@ public class TowerBuilder : MonoBehaviour
 
         if (SfxPlayer.Instance != null)
             SfxPlayer.Instance.PlayTowerLand(landing);
+
+        // 'speed' is how fast the tower was falling when it hit, so harder landings throw up more sediment
+        TowerLandingDust.Spawn(landingDustPrefab, landing, GetFootprintRadius(tower), speed);
+    }
+
+    // Half the tower's width, measured from its meshes. Falls back to the shaft size if it has none.
+    private float GetFootprintRadius(GameObject tower)
+    {
+        bool found = false;
+        Bounds bounds = new Bounds(tower.transform.position, Vector3.zero);
+
+        foreach (Renderer r in tower.GetComponentsInChildren<Renderer>())
+        {
+            // Meshes only, so a lazer beam or particle effect doesn't inflate the size
+            if (!(r is MeshRenderer) && !(r is SkinnedMeshRenderer)) continue;
+
+            if (!found)
+            {
+                bounds = r.bounds;
+                found = true;
+            }
+            else
+            {
+                bounds.Encapsulate(r.bounds);
+            }
+        }
+
+        return found ? Mathf.Max(bounds.extents.x, bounds.extents.z) : shaftRadius * 0.5f;
     }
 
     private void CancelBuild()

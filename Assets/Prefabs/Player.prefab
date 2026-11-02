@@ -1081,6 +1081,9 @@ MonoBehaviour:
   lookXLimit: 80
   boundaryPadding: 1
   fallResetHeight: -5
+  stepLength: 2.2
+  minAirTimeForLand: 0.25
+  hardLandingSpeed: 15
   canMove: 1
 --- !u!114 &1374337757360325633
 MonoBehaviour:
@@ -1140,6 +1143,7 @@ MonoBehaviour:
   shakeMagnitude: 0.35
   shakeDuration: 0.5
   shakeMaxDistance: 40
+  landingDustPrefab: {fileID: 6452934243754225874, guid: c489200a8695af446bd991fb5acdb72c, type: 3}
 --- !u!114 &1330339313708184032
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1162,6 +1166,7 @@ MonoBehaviour:
   sparkPrefab: {fileID: 2025648969537449827, guid: 6baa7b3779d4b8649881548d752a3302, type: 3}
   sparkLifetime: 1.5
   impactInterval: 0.1
+  impactSoundInterval: 0.25
   playerRoot: {fileID: 0}
   minThrowSpeed: 3
   maxThrowSpeed: 6
