@@ -1,16 +1,20 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
     [SerializeField] private GameObject mainMenu;
-    [SerializeField] private GameObject loadingScreen;
-    
+    [Tooltip("Build index of the game scene")]
+    [SerializeField] private int gameSceneIndex = 1;
+
     public void PlayGame()
     {
+        // Ignore extra clicks while a load is already underway
+        if (LoadingScreen.IsLoading) return;
+
         mainMenu.SetActive(false);
-        loadingScreen.SetActive(true);
-        SceneManager.LoadScene(1);
+
+        // The loading screen covers the scene change and the map generation, then fades into the game
+        LoadingScreen.LoadScene(gameSceneIndex);
     }
 
     public void QuitGame()

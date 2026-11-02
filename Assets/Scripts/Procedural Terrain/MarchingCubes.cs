@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -85,12 +86,21 @@ public partial class MarchingCubes : MonoBehaviour
     [SerializeField] private bool showMapCenter = true;
     [SerializeField] private bool showPathSpawnRadii = true;
     [SerializeField] private bool showCenterFlatten = true;
-    
+
+    [Header("Loading")]
+    [Tooltip("Milliseconds of chunk building per frame. Lower keeps the loading screen smoother, higher finishes sooner. At least one chunk is always built per frame")]
+    [SerializeField] private float chunkFrameBudgetMs = 12f;
+
     public Vector3 MapCenter => _mapCenter;
     public Vector3 WorldSize => new Vector3(xSize * chunkXSize, ySize, zSize * chunkZSize);
     public float MapWidth => chunkXSize * xSize;
     public float MapDepth => chunkZSize * zSize;
-    
+
+    // Read by the loading screen while the map is being built
+    public bool IsGenerated { get; private set; }
+    public float GenerationProgress { get; private set; } // 0 to 1
+    public string GenerationStage { get; private set; } = "Preparing the dive...";
+
     // Fired once terrain generation has fully finished
     public event Action OnTerrainGenerated;
     
@@ -161,8 +171,14 @@ public partial class MarchingCubes : MonoBehaviour
         _edgeVertexIndex = new int[(xSize + 1) * (ySize + 1) * (zSize + 1) * 3];
     }
 
-    private void Start()
+    // Generation is spread over several frames so the loading screen can keep animating and show real progress.
+    // Every system that needs the finished map waits for OnTerrainGenerated, so nothing runs on a half-built world.
+    // Progress shares per stage: height 5%, paths 10%, caves 20%, chunks 65%.
+    private IEnumerator Start()
     {
+        IsGenerated = false;
+        GenerationProgress = 0f;
+
         seed = Random.Range(int.MinValue, int.MaxValue);
 
         System.Random prng = new System.Random(seed);
@@ -171,19 +187,36 @@ public partial class MarchingCubes : MonoBehaviour
         // Needed up-front so density sampling (for the height estimate and path carving) matches what BuildChunks will later generate
         _seedOffset = ComputeSeedOffset(seed);
 
+        // Each stage label is set, then a frame passes so the loading screen can draw it before the stage's work starts
+        GenerationStage = "Shaping the sea floor...";
+        yield return null;
+
         // Estimate where the terrain surface roughly sits before any chunks exist, so paths can spawn on it rather than at a fixed height
         _averageHeight = EstimateAverageTerrainHeight();
+        GenerationProgress = 0.05f;
+
+        GenerationStage = "Charting enemy routes...";
+        yield return null;
 
         _paths.Clear();
         _pathSplineContainers.Clear();
         _globalPathSamples.Clear();
         GeneratePaths();
+        GenerationProgress = 0.15f;
+
+        GenerationStage = "Hollowing out caves...";
+        yield return null;
 
         // Caves need the paths to exist so they can stay clear of them
         GenerateCaves();
+        GenerationProgress = 0.35f;
 
-        BuildChunks();
-        
+        yield return BuildChunksRoutine(chunkFrameBudgetMs, 0.35f, 1f);
+
+        GenerationStage = "Releasing the fish...";
+        GenerationProgress = 1f;
+        IsGenerated = true;
+
         OnTerrainGenerated?.Invoke();
     }
 
@@ -261,14 +294,27 @@ public partial class MarchingCubes : MonoBehaviour
         meshCollider.sharedMesh = newMesh;
     }
 
-    // Instantiates and generates every chunk in the grid
+    // Instantiates and generates every chunk in the grid, all in one go (used by the Build Chunks context menu)
     private void BuildChunks()
     {
+        // An infinite budget never yields, so stepping the routine once runs it to the end
+        IEnumerator routine = BuildChunksRoutine(float.PositiveInfinity, 0f, 1f);
+        while (routine.MoveNext()) { }
+    }
+
+    // Instantiates and generates every chunk in the grid, pausing for a frame whenever this frame's time budget is used up.
+    // Progress moves from progressStart to progressEnd as chunks are finished.
+    private IEnumerator BuildChunksRoutine(float frameBudgetMs, float progressStart, float progressEnd)
+    {
         _seedOffset = ComputeSeedOffset(seed);
-        
+
         _chunks = new GameObject[chunkXSize, chunkZSize];
         _chunkComponents = new Chunk[chunkXSize, chunkZSize];
-        
+
+        int total = chunkXSize * chunkZSize;
+        int built = 0;
+        System.Diagnostics.Stopwatch frameTimer = System.Diagnostics.Stopwatch.StartNew();
+
         for (int x = 0; x < chunkXSize; x++)
         {
             for (int z = 0; z < chunkZSize; z++)
@@ -279,6 +325,17 @@ public partial class MarchingCubes : MonoBehaviour
                 _chunkComponents[x, z] = _chunks[x, z].GetComponent<Chunk>();
 
                 _seedOffset.z += zSize;
+
+                built++;
+                GenerationProgress = Mathf.Lerp(progressStart, progressEnd, (float)built / total);
+                GenerationStage = $"Raising the reef... {built}/{total}";
+
+                // The seed offset is a field, so it carries over safely across the paused frame
+                if (frameTimer.Elapsed.TotalMilliseconds >= frameBudgetMs && built < total)
+                {
+                    yield return null;
+                    frameTimer.Restart();
+                }
             }
 
             _seedOffset.z -= chunkZSize * zSize;

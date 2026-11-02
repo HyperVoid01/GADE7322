@@ -136,14 +136,16 @@ public class HUDManager : MonoBehaviour
         gameOverUI.SetActive(true);
     }
 
+    // Both go through the loading screen, which also resets Time.timeScale (game over sets it to 0)
     public void MainMenu()
     {
-        SceneManager.LoadScene(0);
+        LoadingScreen.LoadScene(0);
     }
 
     public void RestartGame()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        // A restart builds a brand new map, so it gets the full loading screen too
+        LoadingScreen.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     // Updates slider for main tower health
