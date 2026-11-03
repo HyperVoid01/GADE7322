@@ -442,7 +442,7 @@ MonoBehaviour:
   pearls: 0
   wood: 0
   gold: 0
-  unlimitedResources: 1
+  unlimitedResources: 0
 --- !u!1 &122198303
 GameObject:
   m_ObjectHideFlags: 0
