@@ -7,7 +7,7 @@ public class Boids : MonoBehaviour
 {
     [Header("Boid Data")]
     [SerializeField] private BoidData data;
-    [SerializeField] private GameObject boidPrefab;
+    [SerializeField] private GameObject[] boidPrefabs;
     [SerializeField] private LayerMask obstacleLayer;
     
     [Header("Spawning")]
@@ -112,7 +112,9 @@ public class Boids : MonoBehaviour
             startForward = ClampPitch(startForward.normalized, Vector3.forward);
             Quaternion startRotation = Quaternion.LookRotation(startForward);
 
-            GameObject boid = Instantiate(boidPrefab, Center + offset, startRotation, transform);
+            int random = Random.Range(0, boidPrefabs.Length);
+            
+            GameObject boid = Instantiate(boidPrefabs[random], Center + offset, startRotation, transform);
 
             _transforms[i] = boid.transform;
             _positions[i] = boid.transform.position;

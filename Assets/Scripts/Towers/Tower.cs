@@ -62,8 +62,8 @@ public class Tower : MonoBehaviour, ITargetable
     private MaterialPropertyBlock _flashBlock;
     private Coroutine _flashRoutine;
 
-    private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor"); // URP / HDRP
-    private static readonly int ColorId = Shader.PropertyToID("_Color");         // Built-in
+    private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+    private static readonly int ColorId = Shader.PropertyToID("_Color");
 
     private EnemyBase _currentEnemy;
     protected EnemyBase CurrentEnemy => _currentEnemy;

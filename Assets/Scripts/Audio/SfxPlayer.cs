@@ -3,8 +3,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 // Bakes the procedural sound effects once at startup and plays them through pools of AudioSources:
-//  - 3D voices for sounds that happen somewhere in the world (they get quieter with distance)
-//  - 2D voices for sounds that are "in your head": UI, alarms, wave horns, your own breathing
+//  - 3D voices for sounds that happen somewhere in the world
+//  - 2D voices for sounds that are at the player: UI, alarms, wave horns, your own breathing
 // Using pools (instead of an AudioSource on each object) means a sound keeps playing even if the
 // object that triggered it is destroyed that same frame.
 //

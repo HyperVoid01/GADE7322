@@ -1,9 +1,8 @@
 using UnityEngine;
 
-// Synthesises short sound effects into AudioClips at runtime - no audio files needed.
+// Synthesises short sound effects into AudioClips at runtime.
 // Every call produces a slightly different sound (random noise, detune), so baking a few
 // variants per sound gives natural variation instead of the same sample repeating.
-// Call these from the main thread only (AudioClip.Create / SetData are main-thread APIs).
 public static class ProceduralSfx
 {
     private static readonly System.Random Rng = new System.Random();

@@ -6,9 +6,6 @@ using UnityEngine;
 //  - Bass pulse: fades in with 'tension' during waves
 //  - Echo: a dark feedback delay so it all sounds like it's drifting through water
 // Notes speed up and get busier as tension rises. EnemySpawner drives 'tension'.
-//
-// Runs on the audio thread: no Unity API calls inside OnAudioFilterRead, and the only allocation
-// is the new random generator when the map's seed arrives.
 [RequireComponent(typeof(AudioSource))]
 public class GenerativeMusic : MonoBehaviour
 {

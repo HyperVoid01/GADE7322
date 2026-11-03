@@ -19,7 +19,7 @@ public enum UpgradeStat
 [Serializable]
 public class UpgradeLevel
 {
-    [Tooltip("TOTAL bonus at this level (not the step). e.g. Damage levels 5, 12, 20")]
+    [Tooltip("TOTAL bonus at this level")]
     public float value;
     public ResourceManager.ResourceCost[] costs;
 }
@@ -34,8 +34,7 @@ public class UpgradeTrack
     public UpgradeLevel[] levels = new UpgradeLevel[3];
 
     public int MaxLevel => levels == null ? 0 : levels.Length;
-
-    // Human readable bonus, e.g. "+25% fire rate"
+    
     public string FormatValue(float value)
     {
         switch (stat)
