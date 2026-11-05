@@ -102,6 +102,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   moveSpeed: 2.5
+  deathSoundSize: 1
   projectilePrefab: {fileID: 6004981332911806414, guid: c486fa0fb44694e44bf680dc5bc77366, type: 3}
   firePoint: {fileID: 4462503419064824009}
   projectileSpeed: 8

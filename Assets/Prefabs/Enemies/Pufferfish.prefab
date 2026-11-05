@@ -236,6 +236,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   moveSpeed: 3
+  deathSoundSize: 1
   inflatedSize: 1.5
   changeSpeed: 3
   inflatedDuration: 0.5

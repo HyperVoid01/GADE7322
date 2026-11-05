@@ -237,6 +237,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   moveSpeed: 2
+  deathSoundSize: 1
 --- !u!225 &7693088190827235503
 CanvasGroup:
   m_ObjectHideFlags: 0
